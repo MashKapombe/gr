@@ -1,9 +1,9 @@
 <?php
 include 'header.php';
 include 'admin_navbar.php';
-include 'includes/db_connect.php';
+//include 'includes/db_connect.php';
 
-if(isset($_POST['add'])){
+/*if(isset($_POST['add'])){
     $id = $_POST['id'];
     $bus_id = $_POST['bus_id'];
     $from_location = $_POST['from_location'];
@@ -13,6 +13,8 @@ if(isset($_POST['add'])){
     $the_time = date('h:i A', strtotime($appt));
     $price = $_POST['price']; 
    // $time = $_POST['time'];
+
+   if(empty($bus_id)||empty($from_location)||empty($to_location)||empty($bus_id)||)
    
     
     $sql = "insert into schedule(bus_id,from_location,to_location,date,time,price)
@@ -24,7 +26,8 @@ if(isset($_POST['add'])){
     }else{
         die("Connection failed: " . $conn->connect_error);
     }
-}
+}*/
+//$busErr = $fromErr = $toErr = $timeErr = $dateErr = $priceErr = "";
     
 
 ?>
@@ -38,30 +41,39 @@ if(isset($_POST['add'])){
     <title>Document</title>
 </head>
 
+<style>
+p {
+    color: red;
+}
+</style>
+
 <body>
-
     <div class="container my-3">
-
         <div class="form-heading col-md-12">
             <h3>Fill in the details below </h3>
         </div>
-
         <div class="form-details">
 
-            <form method="POST">
-
-                <div class="mb-4 row">
-                    <label for="bus_id" class="col-sm-2 col-form-label">Bus Id</label>
+            <form action="includes/add_schedule_page.php" method="POST">
+                <div class="mb-3 row">
+                    <label for="bus_id" class="col-sm-2 col-form-label">BusId</label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" id="bus_id" name="bus_id" placeholder="Number plate"
                             required>
+                        <span class="error">
+                            <?php
+                        if(isset($_GET["error"])) {
+                        if($_GET["error"]=="emptyinput") {
+                        echo "<p>Fill in this field!</p>";
+                       }
+                      }
+
+                      ?>
+                        </span>
                     </div>
                 </div>
-
-                <div class="mb-4 row">
-                    <label for="from_location" class="col-sm-2 col-form-label">From:</label>
+                <div class="mb-3 row"><label for="from_location" class="col-sm-2 col-form-label">From:</label>
                     <div class="col-sm-10">
-
                         <select name="from_location" class="form-select" id="from_location" autocomplete="off" required>
                             <option selected>Select from</option>
                             <option value="Nairobi">Nairobi</option>
@@ -70,11 +82,19 @@ if(isset($_POST['add'])){
                             <option value="Kisumu">Kisumu</option>
                             <option value="Kisii">Kisii</option>
                         </select>
+                        <span class="error">
+                            <?php 
+                           if(isset($_GET["error"])) {
+                           if($_GET["error"]=="emptyinput") {
+                           echo "<p>Fill in this field!</p>";
+                             }
+                           }
+
+                           ?>
+                        </span>
                     </div>
                 </div>
-
-                <div class="mb-4 row">
-                    <label for="to_location" class="col-sm-2 col-form-label">To:</label>
+                <div class="mb-3 row"><label for="to_location" class="col-sm-2 col-form-label">To:</label>
                     <div class="col-sm-10">
                         <select name="to_location" class="form-select" id="to_location" autocomplete="off" required>
                             <option selected>Select destination</option>
@@ -84,32 +104,76 @@ if(isset($_POST['add'])){
                             <option value="Kisumu">Kisumu</option>
                             <option value="Eldoret">Eldoret</option>
                         </select>
+                        <span class="error">
+                            <?php if(isset($_GET["error"])) {
+                            if($_GET["error"]=="emptyinput") {
+                           echo "<p>Fill in this field!</p>";
+                              }
+                             }
+
+                            ?>
+                        </span>
                     </div>
                 </div>
-
-                <div class="mb-4 row">
-                    <label for="date" class="col-sm-2 col-form-label">Date:</label>
+                <div class="mb-3 row"><label for="date" class="col-sm-2 col-form-label">Date:</label>
                     <div class="col-sm-10">
                         <input type="date" name="date" class="form-control" id="date" required>
+                        <span class="error">
+                            <?php if(isset($_GET["error"])) {
+                            if($_GET["error"]=="emptyinput") {
+                            echo "<p>Fill in this field!</p>";
+                              }
+                             }
+
+                          ?>
+                        </span>
                     </div>
                 </div>
-
-
                 <div class="mb-3 row">
                     <label for="appt" class="col-sm-2 col-form-label">Time:</label>
                     <div class="col-sm-10">
                         <input type="time" name="appt" class="form-control" id="appt" required>
+                        <span class="error">
+                            <?php if(isset($_GET["error"])) {
+                            if($_GET["error"]=="emptyinput") {
+                            echo "<p>Fill in this fields!</p>";
+                               }
+                             } 
+
+                          ?>
+                        </span>
                     </div>
                 </div>
-
                 <div class="mb-3 row">
                     <label for="price" class="col-sm-2 col-form-label">Price:</label>
                     <div class="col-sm-10">
-                        <input type="number" name="price" class="form-control" id="price" required>
+                        <input type="number" name="price" class="form-control" id="price" autocomplete="off" required>
+                        <span class="error">
+                            <?php if(isset($_GET["error"])) {
+                            if($_GET["error"]=="emptyinput") {
+                            echo "<p>Fill in this field!</p>";
+                              }
+
+                            else if($_GET["error"]=="invalidprice") {
+                           echo "<p>Invalid price!</p>";
+                            }
+                            }
+
+                            ?>
+                        </span>
                     </div>
-                </div>
-                <button type="submit" name="add" class="btn btn-primary btn-md">Add</button>
+                </div><button type="submit" name="add" class="btn btn-primary btn-md">Add</button>
             </form>
+            <?php 
+            if(isset($_GET["error"])) {
+             if($_GET["error"]=="choosedifflocations") {
+             echo "<p> Choose different locations!</p>";
+               } else if($_GET["error"] == "none"){
+                echo "<h5>You have signed up.</h5>";
+            }
+                 }
+
+                ?>
         </div>
     </div>
 

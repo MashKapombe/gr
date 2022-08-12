@@ -1,5 +1,6 @@
 <?php
 include 'includes/db_connect.php';
+include 'includes/functions';
 include 'header.php';
 include 'admin_navbar.php'; 
 ?>

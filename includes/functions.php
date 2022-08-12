@@ -22,7 +22,6 @@ function invalidName($name){
     }
     return $result; 
 }
-
 function invalidUname($username){
     $result;
     if(!preg_match("/^[a-zA-Z-' ]*$/", $username)){
@@ -34,6 +33,9 @@ function invalidUname($username){
     }
     return $result; 
 }
+
+
+
 
 function pwdMatch($password, $cpassword){
     $result;
@@ -261,4 +263,72 @@ function busExists($conn, $bus_id){
     
  }
 
+
+ //schedule functions
+ function emptyInputSchedule($bus_id, $from_location, $to_location, $date, $the_time, $price){
+    $result;
+    if(empty($bus_id) || empty($from_location) || empty($to_location)|| empty($date)|| empty($the_time)|| empty($price)){
+        
+        $result = true;
+    }
+    else{
+        $result = false;
+    }
+    return $result; 
+    
+ }
+ 
+ function invalidPrice($price){
+    $result;
+    if (is_numeric($price) === false) {  
+       $result = true;
+    }
+    else{
+        $result = false;
+    }
+    return $result; 
+}
+
+function fromToMatch($from_location,$to_location){
+    $result;
+    if($from_location === $to_location){
+        $result = true;
+    }
+    else{
+        $result = false;
+    }
+    return $result; 
+} 
+
+function addSchedule($conn,$bus_id, $from_location, $to_location, $date, $the_time, $price){
+    $sql = "insert into schedule(bus_id,from_location,to_location,date,time,price)
+    values('$bus_id','$from_location','$to_location','$date','$the_time','$price')";
+   $result = mysqli_query($conn, $sql);
+   if($result){
+       header('Location: ../view_schedule.php?error=none');
+       //echo 'data inserted successfully';
+   }else{
+       die("Connection failed: " . $conn->connect_error);
+   }
+}
+/*function addSchedule($conn,$bus_id, $from_location, $to_location, $date, $the_time, $price){
+    $sql = "insert into schedule(bus_id,from_location,to_location,date,the_time,price)
+    values (?,?,?,?,?,?);";
+    //prepared stmt without user input/prvente any code being injected in db
+    $stmt = mysqli_stmt_init($conn);
+    //check if prepared stmt will fail/succeed
+    if(!mysqli_stmt_prepare($stmt, $sql)){
+      header("Location: ../add_schedule.php?error=stmtfailed");
+          exit();
+    }
+
+    mysqli_stmt_bind_param($stmt, "sssssi",$bus_id, $from_location, $to_location, $date, $the_time, $price);
+    //execute stmt
+    mysqli_stmt_execute($stmt);
+    //close the prepared stmt
+    mysqli_stmt_close($stmt);
+    
+    header("Location: ../view_schedule.php?error=none");
+         exit();
+}*/
 ?>
