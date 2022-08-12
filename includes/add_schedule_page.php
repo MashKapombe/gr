@@ -26,8 +26,15 @@ if(isset($_POST["add"])){
         header("Location: ../add_schedule.php?error=choosedifflocations");
         exit();       
     }
+   
      //add schedule
+     if(busExists($conn,$bus_id) == !false){
      addSchedule($conn,$bus_id, $from_location, $to_location, $date, $the_time, $price);
+     
+     } else{
+        header("Location: ../add_bus.php?error=addbusfirst");
+        exit();
+    }
     
   }
   else{

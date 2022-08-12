@@ -34,6 +34,9 @@ p {
         else if($_GET["error"] == "busexists"){
             echo "<p> The Bus Number Plate exists!</p>";
         }
+        else if($_GET["error"] == "addbusfirst"){
+            echo "<p>Add bus to create schedule!</p>";
+        }
         else if($_GET["error"] == "none"){
             echo "<h5>Bus added.</h5>";
         }
