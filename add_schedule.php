@@ -1,34 +1,6 @@
 <?php
 include 'header.php';
-include 'admin_navbar.php';
-//include 'includes/db_connect.php';
-
-/*if(isset($_POST['add'])){
-    $id = $_POST['id'];
-    $bus_id = $_POST['bus_id'];
-    $from_location = $_POST['from_location'];
-    $to_location = $_POST['to_location'];
-    $date = $_POST['date'];
-    $appt = $_POST['appt'];
-    $the_time = date('h:i A', strtotime($appt));
-    $price = $_POST['price']; 
-   // $time = $_POST['time'];
-
-   if(empty($bus_id)||empty($from_location)||empty($to_location)||empty($bus_id)||)
-   
-    
-    $sql = "insert into schedule(bus_id,from_location,to_location,date,time,price)
-     values('$bus_id','$from_location','$to_location','$date','$the_time','$price')";
-    $result = mysqli_query($conn, $sql);
-    if($result){
-        header('Location: view_schedule.php');
-        //echo 'data inserted successfully';
-    }else{
-        die("Connection failed: " . $conn->connect_error);
-    }
-}*/
-//$busErr = $fromErr = $toErr = $timeErr = $dateErr = $priceErr = "";
-    
+include 'admin_navbar.php';    
 
 ?>
 <!DOCTYPE html>
@@ -53,6 +25,14 @@ p {
             <h3>Fill in the details below </h3>
         </div>
         <div class="form-details">
+            <?php
+                        if(isset($_GET["error"])) {
+                        if($_GET["error"]=="scheduledoesntexist") {
+                        echo "<p>Add schedule first!</p>";
+                       }
+                      }
+
+                      ?>
 
             <form action="includes/add_schedule_page.php" method="POST">
                 <div class="mb-3 row">

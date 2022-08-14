@@ -311,24 +311,182 @@ function addSchedule($conn,$bus_id, $from_location, $to_location, $date, $the_ti
        die("Connection failed: " . $conn->connect_error);
    }
 }
-/*function addSchedule($conn,$bus_id, $from_location, $to_location, $date, $the_time, $price){
-    $sql = "insert into schedule(bus_id,from_location,to_location,date,the_time,price)
-    values (?,?,?,?,?,?);";
-    //prepared stmt without user input/prvente any code being injected in db
+//passenger
+function emptyInputPass($ref_no,$name,$contact){
+    $result;
+    if(empty($ref_no) || empty($name) || empty($contact)){
+        $result = true;
+    }else{
+        $result = false;
+    }
+    return $result;
+}
+function invalidRef($ref_no){
+    $result;
+    if (is_numeric($ref_no) === false) {  
+       $result = true;
+    }
+    else{
+        $result = false;
+    }
+    return $result;
+    
+}
+function invalidpName($name){
+    $result;
+    if(!preg_match("/^[a-zA-Z-' ]*$/", $name) && is_numeric($status)){
+        
+        $result = true;
+    }
+    else{
+        $result = false;
+    }
+    return $result;
+}
+
+function invalidContact($contact){
+    $result;
+    if(!preg_match('/^[0-9]{10}+$/', $contact)){
+        $result = true;
+    }else{
+        $result = false;
+    }
+    return $result;
+}
+
+function refnoExists($conn,$ref_no){
+    $sql = "select * from passengers where ref_no = ?;";
+    //prepared stmt without user input/prevent any code being injected in db
     $stmt = mysqli_stmt_init($conn);
     //check if prepared stmt will fail/succeed
     if(!mysqli_stmt_prepare($stmt, $sql)){
-      header("Location: ../add_schedule.php?error=stmtfailed");
+      header("Location: ../add_passenger.php?error=stmtfailed");
           exit();
     }
-
-    mysqli_stmt_bind_param($stmt, "sssssi",$bus_id, $from_location, $to_location, $date, $the_time, $price);
+    //if succeeded pass passenger data to db
+    mysqli_stmt_bind_param($stmt, "i", $ref_no);
     //execute stmt
     mysqli_stmt_execute($stmt);
+    
+    //grab data from db
+    $resultData = mysqli_stmt_get_result($stmt);
+    //check if there is a result from the stmt
+    //if there is data from db result = true send to view bus
+   if($row = mysqli_fetch_assoc($resultData)){
+      //return all the data if pass exists in db
+      return $row;   
+    }else{
+      $result = false;
+      return $result;  
+    }
     //close the prepared stmt
     mysqli_stmt_close($stmt);
     
-    header("Location: ../view_schedule.php?error=none");
-         exit();
+}
+
+function createPassenger($conn, $ref_no, $name, $contact){
+$sql = "insert into passengers(ref_no,name,contact) values('$ref_no','$name','$contact')";
+$result = mysqli_query($conn, $sql);
+if($result){
+//echo "succesful";
+header("Location: ../view_passenger.php");
+}else{
+die("Connection failed: " . $conn->connect_error);
+}
+}
+
+//bookings
+function emptyBookings($ref_no,$name,$contact,$bus_id,$from_location,$to_location,$date,$the_time,$price,$status){
+    $result;
+    if(empty($ref_no) || empty($name) || empty($contact) || empty($bus_id) || empty($from_location) || empty($to_location) || empty($date) || empty($the_time) || empty($price) || empty($status)){
+        $result = true;
+    }else{
+        $result = false;
+    }
+    return $result;   
+}
+
+function invalidStatus($status){
+      $result;
+    if (!preg_match("/^[a-zA-Z-' ]*$/", $status)){  
+       $result = true;
+    }
+    else{
+        $result = false;
+    }
+    return $result;
+}
+
+ /*function passengerExists($conn,$ref_no,$name,$contact){
+    $sql = "select * from passenger where ref_no = ?, name = ?, contact = ?;";
+    //prepared stmt without user input/prevent any code being injected in db
+    $stmt = mysqli_stmt_init($conn);
+    //check if prepared stmt will fail/succeed
+    if(!mysqli_stmt_prepare($stmt, $sql)){
+      header("Location: ../add_bookings.php?error=stmtfailed");
+          exit();
+    }
+    //if succeeded pass  data to db
+    mysqli_stmt_bind_param($stmt, "iss", $ref_no,$name,$contact);
+    //execute stmt
+    mysqli_stmt_execute($stmt);
+    
+    //grab data from db
+    $resultData = mysqli_stmt_get_result($stmt);
+    //check if there is a result from the stmt
+    //if there is data from db result = true send to view bus
+    if($row = mysqli_fetch_assoc($resultData)){
+      //return all the data if bus exists in db
+      return $row;   
+    }else{
+      $result = false;
+      return $result;
+    }
+    //close the prepared stmt
+    mysqli_stmt_close($stmt);
+    
 }*/
+
+/*function scheduleExists($conn,$bus_id,$from_location,$to_location,$date,$the_time,$price){
+    $sql = "select * from schedule where bus_id = ?,from_location = ?,to_location = ?, date = ?, the_time= ?, price = ? ;";
+    //prepared stmt without user input/prevent any code being injected in db
+    $stmt = mysqli_stmt_init($conn);
+    //check if prepared stmt will fail/succeed
+    if(!mysqli_stmt_prepare($stmt, $sql)){
+      header("Location: ../add_bookings.php?error=stmtfailed");
+          exit();
+    }
+    //if succeeded pass bus data to db
+    mysqli_stmt_bind_param($stmt, "sssssi", $bus_id,$from_location,$to_location,$date,$the_time,$price);
+    //execute stmt
+    mysqli_stmt_execute($stmt);
+    
+    //grab data from db
+    $resultData = mysqli_stmt_get_result($stmt);
+    //check if there is a result from the stmt
+    //if there is data from db result = true send to view bus
+    if($row = mysqli_fetch_assoc($resultData)){
+      //return all the data if bus exists in db
+      return $row;   
+    }else{
+      $result = false;
+      return $result;
+    }
+    //close the prepared stmt
+    mysqli_stmt_close($stmt);
+    
+}*/
+
+function addBookings($conn,$ref_no,$name,$contact,$bus_id,$from_location,$to_location,$date,$the_time,$price,$status){
+    $sql = "insert into booked(ref_no,name,contact,bus_id,from_location,to_location,date,time,price,status) values('$ref_no','$name','$contact','$bus_id','$from_location','$to_location','$date','$the_time','$price','$status')";
+    $result = mysqli_query($conn, $sql);
+    if($result){
+        //echo "succesful";
+        header("Location: ../booked.php");
+        }
+        else{
+        die("Connection failed: " . $conn->connect_error);
+        }
+}
+
 ?>
